@@ -62,7 +62,7 @@ class BinaryTree {
     if (type === 'LRD') console.log(root.val)
   }
 
-  // 层次遍历
+  // 层序遍历
   traverse_level (root) {
     // 这里吧queue当成队列使用，入队列是push，出队列是shift
     var queue = []
