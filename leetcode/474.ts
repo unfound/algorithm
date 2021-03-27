@@ -6,7 +6,7 @@ function findMaxForm(strs: string[], m: number, n: number): number {
 
   return dp(strs, [])
 
-  function dp (str: string[], subs: string[]) {
+  function dp(str: string[], subs: string[]) {
     let oneNum = 0
     let zeroNum = 0
     for (let str of subs) {
@@ -32,7 +32,7 @@ function findMaxForm(strs: string[], m: number, n: number): number {
     return max
   }
 
-  function getStrLength (str: string): number[] {
+  function getStrLength(str: string): number[] {
     let oneNum = 0
     for (let i = 0; i < str.length; i++) {
       oneNum += +str[i]
@@ -40,3 +40,38 @@ function findMaxForm(strs: string[], m: number, n: number): number {
     return [str.length - oneNum, oneNum]
   }
 };
+
+
+/**
+ * 动态规划解法
+ */
+
+function findMaxFormDP(strs: string[], m: number, n: number): number {
+  var dp: number[][] = []
+  for (var i = 0; i <= m; i++) {
+    dp[i] = []
+    for (var j = 0; j <= n; j++) {
+      dp[i][j] = 0
+    }
+  }
+  for (let str of strs) {
+    let [zeroNum, oneNum] = getOneAndZeroNum(str)
+
+    for (var i = m; i >= zeroNum; i--) {
+      for (var j = n; j >= oneNum; j--) {
+        dp[i][j] = Math.max(dp[i][j], dp[i - zeroNum][j - oneNum] + 1)
+      }
+    }
+  }
+
+  return dp[m][n]
+
+  function getOneAndZeroNum(str: string): number[] {
+    let oneNum = 0
+    for (let i = 0; i < str.length; i++) {
+      oneNum += (+str[i])
+    }
+    return [str.length - oneNum, oneNum]
+  }
+};
+
