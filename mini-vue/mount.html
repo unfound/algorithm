@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .red {
+      color: red;
+    }
+    .green {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <button id="btn">change</button>
+  <script src="./render.js"></script>
+  <script>
+    const vnode = h('div', { id: 'test' }, [
+      h('span', { class: 'red'}, '试试看咯'),
+      h('span', null, '不看不看')
+    ])
+
+    mount(vnode, document.getElementById('app'))
+
+    function change () {
+      console.log('change')
+      const vnode2 = h('div', { id: 'test' }, [
+        h('span', { class: 'green'}, '改变了')
+      ])
+
+      patch(vnode, vnode2)
+    }
+    document.getElementById('btn').onclick = change
+  </script>
+</body>
+</html>
