@@ -37,13 +37,7 @@ function patch (oldNode, newNode) {
     }
 
     if (oldNode.children && !newNode.children) {
-      if (typeof oldNode.children === 'string' || typeof oldNode.children === 'number') {
-        oldNode.el.textContent = ''
-      } else {
-        oldNode.children.forEach(child => {
-          oldNode.el.removeChild(child.el)
-        })
-      }
+      oldNode.el.innerHTML = ''
     } else if (!oldNode.children && newNode.children) {
       if (typeof newNode.children === 'string' || typeof newNode.children === 'number') {
         oldNode.el.textContent = newNode.children

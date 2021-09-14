@@ -7,3 +7,5 @@
 7. URI malformed把<%= BASE_URL %>占位符去掉
 8. require不存在的地方都改为import引入，require.context也改成import.meta.globEager
 9. webpack中import.meta.globEager会报错，写一个vite插件在编译的时候进行替换
+10. public下的文件可以通过设置alias来兼容
+11. 动态reqire使用import来解决
