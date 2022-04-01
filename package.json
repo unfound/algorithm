@@ -1,0 +1,22 @@
+{
+  "name": "algorithm",
+  "version": "1.0.0",
+  "description": "记录算法学习过程中的一些基础知识和LeetCode的刷题笔记",
+  "main": "Event.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unfound/algorithm.git"
+  },
+  "author": "unfound",
+  "bugs": {
+    "url": "https://github.com/unfound/algorithm/issues"
+  },
+  "homepage": "https://github.com/unfound/algorithm#readme",
+  "devDependencies": {
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  }
+}
