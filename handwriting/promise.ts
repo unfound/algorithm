@@ -32,9 +32,7 @@ class Promise {
             if (this.status === Status.PENDING) {
                 this.status = Status.FULFILLED
                 this.value = data
-                this.onResolvedCallbacks.forEach(cb => {
-                    cb && cb(data)
-                })
+                this.onResolvedCallbacks.forEach(cb => cb(data))
             }
         }
     
@@ -42,9 +40,7 @@ class Promise {
             if (this.status === Status.PENDING) {
                 this.status = Status.REJECTED
                 this.reason = err
-                this.onRejectedCallbacks.forEach(cb => {
-                    cb && cb(err)
-                })
+                this.onRejectedCallbacks.forEach(cb => cb(err))
             }
         }
         executor(resolve, reject)
@@ -56,32 +52,33 @@ class Promise {
         // 因为错误的值要让后面访问到，所以这里也要抛出错误，不然会在之后 then 的 resolve 中捕获
         onRejected = typeof onRejected === 'function' ? onRejected : (err: unknown) => { throw err }
         
-        return new Promise((resolve, reject) => {
+        const p = new Promise((resolve, reject) => {
             if (this.status === Status.FULFILLED) {
-                runPromiseStatus(onFulfilled!, this.value, resolve, reject)
+                runPromiseStatus(onFulfilled!, this.value, p, resolve, reject)
             } else if (this.status === Status.REJECTED) {
-                runPromiseStatus(onRejected!, this.reason, resolve, reject)
+                runPromiseStatus(onRejected!, this.reason, p, resolve, reject)
             } else {
                 this.onResolvedCallbacks.push(() => {
-                    runPromiseStatus(onFulfilled!, this.value, resolve, reject)
+                    runPromiseStatus(onFulfilled!, this.value, p, resolve, reject)
                 })
                 this.onRejectedCallbacks.push(() => {
-                    runPromiseStatus(onRejected!, this.reason, resolve, reject)
+                    runPromiseStatus(onRejected!, this.reason, p, resolve, reject)
                 })
             }
         })
+
+        return p
     }
 }
-
-function runPromiseStatus (runFn: Function, data: unknown, resolve: Resolve ,reject: Reject) {
+// 这里提取出来一个单独的函数将无法通过测试
+// 为何？
+// 测试结果是和setTimeout有关，把setTimeout移出去就可以了
+// 为何？
+function runPromiseStatus (runFn: Function, data: unknown, p: Promise, resolve: Resolve ,reject: Reject) {
     setTimeout(() => {
         try {
             const res = runFn(data)
-            if (res instanceof Promise) {
-                res.then(resolve, reject)
-            } else {
-                resolve(data)
-            }
+            resolveResult(res, p, resolve, reject)
         } catch (e) {
             reject(e)
         }
@@ -89,30 +86,97 @@ function runPromiseStatus (runFn: Function, data: unknown, resolve: Resolve ,rej
 
 }
 
-const p = new Promise(resolve => {
-    setTimeout(() => {
-        resolve(111)
-    }, 200)
-})
+function resolveResult (result: unknown, p: Promise, resolve: Resolve ,reject: Reject) {
+    if (p === result) {
+        return reject(new TypeError("Chaining cycle detected for promise #<Promise>"))
+    }
+    let called: Boolean | undefined
 
-p.then(data => {
-    console.log('---1---')
-    console.log(data)
-}).then(data => {
-    console.log('---2---')
-    console.log(data)
-    return new Promise(r => {
-        setTimeout(() => {
-            r(222)
-        }, 20)
-    })
-}).then(l => {
+    if ((result != null && typeof result === 'object') || typeof result === 'function') {
+        try {
+            const then = (result as any).then
+            if (typeof then === 'function') {
+                then.call(
+                    result,
+                    (data: unknown) => {
+                        if (called) return
+                        called = true
+                        resolveResult(data, p, resolve, reject)
+                    },
+                    (err: unknown) => {
+                        if (called) return
+                        called = true
+                        reject(err)
+                    }
+                )
+            } else {
+                resolve(result)
+            }
+        } catch (e) {
+            if (called) return
+            called = true
+            reject(e)
+        }
+    } else {
+        resolve(result)
+    }
+}
 
-    console.log('---4---')
-    console.log(l)
-})
+// var p = new Promise(resolve => {
+//     setTimeout(() => {
+//         resolve(222)
+//     }, 200)
+// })
 
-p.then(data => {
-    console.log('---3---')
-    console.log(data)
-})
+// var pip = p.then(data => {
+//     console.log(data)
+//     return pip
+// }, err => {
+//     console.log(err)
+// })
+// pip.then(
+//     () => {},
+//     err => {
+//         console.log('err')
+//         console.log(err)
+//     }
+// )
+
+// const p = new Promise(resolve => {
+//     setTimeout(() => {
+//         resolve(111)
+//     }, 200)
+// })
+
+// p.then(data => {
+//     console.log('---1---')
+//     console.log(data)
+// }).then(data => {
+//     console.log('---2---')
+//     console.log(data)
+//     return new Promise(r => {
+//         setTimeout(() => {
+//             r(222)
+//         }, 20)
+//     })
+// }).then(l => {
+//     console.log('---4---')
+//     console.log(l)
+// })
+
+// p.then(data => {
+//     console.log('---3---')
+//     console.log(data)
+// })
+
+// promise.js
+// 这里是上面写的 Promise 全部代码
+// Promise.defer = Promise.deferred = function () {
+//     let dfd = {}
+//     dfd.promise = new Promise((resolve,reject)=>{
+//         dfd.resolve = resolve;
+//         dfd.reject = reject;
+//     });
+//     return dfd;
+// }
+// module.exports = Promise;
