@@ -1,15 +1,15 @@
 interface Array<T> {
-    forEach2: Function
+    forEach2: (cb: CbType, thisArg?: unknown) => void
 }
 
-Array.prototype.forEach2 = function (cb: Function, thisArg: unknown) {
-    const obj: Array<unknown> = Object(this)
-    console.log(obj)
-    console.log(Array.isArray(obj))
-    const len = obj.length >>> 0
+type CbType = (val: unknown, key: number, arr: unknown[], ...other: unknown[]) => unknown
+
+Array.prototype.forEach2 = function (cb: CbType, thisArg?: unknown) {
+    const arr: Array<unknown> = Object(this)
+    const len = arr.length >>> 0
     for (let i = 0; i < len; i++) {
-        if (i in obj) {
-            cb.call(thisArg, obj[i], i, obj)
+        if (i in arr) {
+            cb.call(thisArg, arr[i], i, arr)
         }
     }
 }
