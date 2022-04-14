@@ -1,16 +1,4 @@
-/**
- * Definition for a binary tree node.
- * class TreeNode {
- *     val: number
- *     left: TreeNode | null
- *     right: TreeNode | null
- *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
- *         this.val = (val===undefined ? 0 : val)
- *         this.left = (left===undefined ? null : left)
- *         this.right = (right===undefined ? null : right)
- *     }
- * }
- */
+export {}
 
 class TreeNode {
   val: number
@@ -33,7 +21,7 @@ function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: Tree
     let isInRight = pqIsInChildTree(root.right)
 
     // 如果根节点被找到，则返回true
-    if (root.val === p.val || root.val === q.val) {
+    if (root.val === p?.val || root.val === q?.val) {
       // 如果根节点等于p或q，那么左右子树中有一个包含p或q则该节点就是最近公共祖先
       if (isInLeft || isInRight) {
         parentNode = root
