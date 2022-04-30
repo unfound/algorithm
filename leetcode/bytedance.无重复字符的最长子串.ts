@@ -1,3 +1,5 @@
+export {}
+
 function lengthOfLongestSubstringOld(s: string): number {
     if (s.length <= 0) return 0
     let maxLength = 1
