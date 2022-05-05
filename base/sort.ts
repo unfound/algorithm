@@ -48,12 +48,16 @@ export function quickSortByPoint (arr: number[]): number[] {
     sortByPoint(arr, 0, arr.length - 1)
     return arr
 }
-console.time('quickSort')
-console.log(quickSort([6,1,8,3,4,9,5,4,9,10,7,2,9,21,5,6,85,5,13,5,43,14515,1456,2,543,51,31,355463,21,54,351,5,3,1,5,5,51,5]))
-console.log(quickSort([6,1,8,4,7,2]))
-console.timeEnd('quickSort')
 
+/**
+ * 下面两个时间似乎并不准，对调一下执行位置会发现固定上面执行的更慢
+ */
 console.time('quickSortByPoint')
 console.log(quickSortByPoint([6,1,8,3,4,9,5,4,9,10,7,2,9,21,5,6,85,5,13,5,43,14515,1456,2,543,51,31,355463,21,54,351,5,3,1,5,5,51,5]))
 console.log(quickSortByPoint([6,1,8,4,7,2]))
 console.timeEnd('quickSortByPoint')
+
+console.time('quickSort')
+console.log(quickSort([6,1,8,3,4,9,5,4,9,10,7,2,9,21,5,6,85,5,13,5,43,14515,1456,2,543,51,31,355463,21,54,351,5,3,1,5,5,51,5]))
+console.log(quickSort([6,1,8,4,7,2]))
+console.timeEnd('quickSort')
